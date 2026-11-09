@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>The Art of Touch Academy</title>
-<meta name="description" content="TOTA, The Art of Touch Academy: online massage education. Browse courses in relaxation, deep tissue, sports and facial massage and professional development.">
+<meta name="description" content="TATA, The Art of Touch Academy: online massage education. Browse courses in relaxation, deep tissue, sports and facial massage and professional development.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap">
@@ -83,6 +83,10 @@ main:focus{outline:none}
 .nav a{display:inline-block;padding:.5rem 0;font-size:.74rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;color:var(--fg-soft);border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
 .nav a:hover,.nav a[aria-current="page"]{color:var(--fg);border-color:var(--accent)}
 .menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--fg);border-radius:999px;padding:.65rem 1.1rem;font:600 .72rem var(--sans);letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+.lang-select{order:3;flex:none;width:auto;margin-left:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:.65rem .85rem;font:600 .72rem var(--sans);letter-spacing:.08em;cursor:pointer}
+.nav{order:2}
+.menu-btn{order:1}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media (max-width:760px){
   .menu-btn{display:inline-block}
   .nav{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-left,0px)) 16px}
@@ -265,6 +269,13 @@ main{animation:in .5s ease backwards}
       <span class="logo-t"><b>THE ART OF TOUCH</b><i>ACADEMY</i></span>
     </a>
     <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <label class="sr-only" for="language">Language</label>
+    <select class="lang-select" id="language" aria-label="Language">
+      <option value="uk">UA</option>
+      <option value="en">EN</option>
+      <option value="nl">NL</option>
+      <!-- <option value="ru">RU</option> -->
+    </select>
     <ul class="nav" id="nav" aria-label="Main navigation">
       <li><a href="#home" data-r="home">Home</a></li>
       <li><a href="#about" data-r="about">About</a></li>
@@ -290,7 +301,7 @@ main{animation:in .5s ease backwards}
 {
   "site": {
     "name": "The Art of Touch Academy",
-    "short": "TOTA",
+    "short": "TATA",
     "email": "hello@your-domain.com",
     "heroImage": "",
     "newsletterUrl": "",
@@ -321,7 +332,8 @@ main{animation:in .5s ease backwards}
       "materials": ["Video lessons","Printable routine map (PDF)","Session checklist"],
       "faq": [
         {"q": "Do I need any experience?","a": "No. The course starts with the basics and builds step by step."},
-        {"q": "Do I need a massage table?","a": "A table is ideal, but the first modules can be practised on a firm, comfortable surface."}
+        {"q": "Do I need a massage table?","a": "A table is ideal, but the first modules can be practised on a firm, comfortable surface."},
+        {"q": "Do I receive a certificate?","a": "After successfully completing this introductory course, you receive an electronic certificate confirming course completion and that you have studied the basics of the relevant massage technique. The certificate is informational only; it is not a professional qualification and does not confirm professional accreditation."}
       ],
       "gumroadUrl": "https://example.gumroad.com/l/relaxation-massage-foundations",
       "featured": true, "status": "published", "placeholder": true
@@ -456,9 +468,245 @@ main{animation:in .5s ease backwards}
   var courses = DATA.courses.filter(function(c){return c.status === 'published';});
   var main = document.getElementById('main');
   var filter = 'All';
+  var language = 'uk';
+  try { language = localStorage.getItem('tota-language') || 'uk'; } catch(e) {}
+  if(['en','nl','uk'].indexOf(language) < 0) language = 'uk';
+  /* var translations = {
+    'Home':['Home','Головна','Главная'], 'About':['Over ons','Про нас','О нас'], 'Courses':['Cursussen','Курси','Курсы'], 'Contact':['Contact','Контакти','Контакты'],
+    'Menu':['Menu','Меню','Меню'], 'Language':['Taal','Мова','Язык'], 'Skip to content':['Ga naar inhoud','Перейти до вмісту','Перейти к содержимому'],
+    'Online massage education':['Online massageopleidingen','Онлайн-навчання масажу','Онлайн-обучение массажу'],
+    'Master the ':'Beheers de ','Опануйте ','Освойте ', ' of Touch.':[' van aanraking.',' мистецтво дотику.',' искусство прикосновения.',
+    'Discover the knowledge, techniques and philosophy behind professional massage.':['Ontdek de kennis, technieken en filosofie achter professionele massage.','Відкрийте знання, техніки та філософію професійного масажу.','Откройте знання, техники и философию профессионального массажа.'],
+    'Explore Courses':['Bekijk cursussen','Переглянути курси','Смотреть курсы'], 'About TOTA':['Over TOTA','Про TOTA','О TOTA'],
+    'Introduction':['Introductie','Вступ','Введение'], 'An academy for people who work with their ':'Een academie voor mensen die met hun ','Академія для тих, хто працює своїми ','Академия для тех, кто работает ' ,
+    'hands.':'handen.','руками.','руками.', 'Knowledge':['Kennis','Знання','Знания'], 'Technique':['Techniek','Техніка','Техника'],
+    'Body awareness':['Lichaamsbewustzijn','Усвідомлення тіла','Осознанность тіла'], 'Human touch':['Menselijke aanraking','Людяний дотик','Человеческое прикосновение'],
+    'Why a movement works, not only how it looks.':['Waarom een beweging werkt, niet alleen hoe die eruitziet.','Чому рух працює, а не лише як він виглядає.','Почему движение работает, а не только как оно выглядит.'],
+    'Clear, repeatable strokes practised step by step.':['Duidelijke, herhaalbare technieken die stap voor stap worden geoefend.','Чіткі повторювані прийоми, які відпрацьовуються крок за кроком.','Чёткие повторяемые приёмы, отрабатываемые шаг за шагом.'],
+    'Attention to posture, breath and tension, yours and theirs.':['Aandacht voor houding, ademhaling en spanning, bij jezelf en de ander.','Увага до постави, дихання та напруження — вашого й партнера.','Внимание к осанке, дыханию и напряжению — вашему и клиента.'],
+    'The care and presence that make a session feel right.':['De aandacht en aanwezigheid die een sessie goed laten voelen.','Турбота й уважність, що створюють правильну атмосферу сеансу.','Забота и присутствие, благодаря которым сеанс проходит комфортно.'],
+    'Featured courses':['Uitgelichte cursussen','Рекомендовані курси','Рекомендуемые курсы'], 'Begin with ':'Begin met ','Почніть з ','Начните с ', 'one':'één','одного','одного', ' course.':' cursus.',' курсу.',' курса.', 'All courses':['Alle cursussen','Усі курси','Все курсы'],
+    'Our philosophy':['Onze filosofie','Наша філософія','Наша философия'],
+    'Touch is a language. Learning it takes attention, patience and a clear understanding of how the body moves.':['Aanraking is een taal. Je leert haar met aandacht, geduld en begrip van hoe het lichaam beweegt.','Дотик — це мова. Щоб опанувати її, потрібні увага, терпіння та розуміння руху тіла.','Прикосновение — это язык. Чтобы научиться ему, нужны внимание, терпение и понимание движений тіла.'],
+    'Read our approach':['Onze aanpak','Наш підхід','Наш подход'], 'The art of touch.':['De kunst van aanraking.','Мистецтво дотику.','Искусство прикосновения.'], 'The science of movement.':['De wetenschap van beweging.','Наука руху.','Наука движения.'], 'The knowledge of touch.':['De kennis van aanraking.','Знання дотику.','Знание прикосновения.'],
+    'Why learn with TOTA':['Waarom leren bij TOTA','Чому варто навчатися в TOTA','Почему стоит учиться в TOTA'], 'Clear structure, ':'Duidelijke structuur, ','Чітка структура, ','Чёткая структура, ', 'calm':'rustig','спокійний','спокойный', ' pace.':' tempo.',' темп.',' темп.',
+    'Structured programmes':['Gestructureerde programma’s','Структуровані програми','Структурированные программы'], 'Each course is a sequence of modules, from preparation to the finishing stroke.':['Elke cursus bestaat uit modules, van de voorbereiding tot de laatste beweging.','Кожен курс складається з модулів — від підготовки до завершального прийому.','Каждый курс состоит из модулей — от подготовки до завершающего движения.'],
+    'Technique with reasons':['Techniek met uitleg','Техніка з поясненнями','Техника с объяснением'], 'Movements are explained with the thinking behind them: pressure, direction and pace.':['Bij bewegingen leggen we uit waarom ze werken: druk, richting en tempo.','Ми пояснюємо логіку рухів: силу натиску, напрямок і темп.','Мы объясняем логику движений: силу давления, направление и темп.'],
+    'Your own pace':['In je eigen tempo','У власному темпі','В своём темпе'], 'Lessons are self-paced, so you can repeat a module until it feels natural.':['Je volgt de lessen in je eigen tempo en herhaalt modules tot ze vertrouwd voelen.','Навчайтеся у власному темпі й повторюйте модулі, доки рухи не стануть природними.','Учитесь в своём темпе и повторяйте модули, пока движения не станут привычными.'],
+    'No surprises':['Geen verrassingen','Без несподіванок','Без сюрпризов'], 'Every course page lists the programme and materials before you buy. Checkout is handled by Gumroad.':['Op elke cursuspagina staan het programma en de materialen. Betalen verloopt via Gumroad.','На сторінці кожного курсу вказані програма й матеріали. Оплата відбувається через Gumroad.','На странице курса указаны программа и материалы. Оплата проходит через Gumroad.'],
+    'Massage techniques':['Massagetechnieken','Техніки масажу','Техники массажа'], 'The movements behind the ':'De bewegingen achter de ','Рухи, що лежать в основі ','Движения, лежащие в основе ', 'practice':'praktijk','практики','практики', '.':' .','.', '.',
+    'A few of the classical techniques you meet across our courses.':['Enkele klassieke technieken die in onze cursussen aan bod komen.','Кілька класичних технік, які вивчаються на наших курсах.','Нескілька класичних техник, які вивчаються на наших курсах.'],
+    'Long, gliding strokes that spread oil and warm the tissue.':['Lange, glijdende bewegingen die olie verdelen en het weefsel opwarmen.','Довгі ковзні рухи, що розподіляють олію та розігрівають тканини.','Длинные скользящие движения, распределяющие масло и разогревающие ткани.'],
+    'Kneading, lifting and rolling of soft tissue.':['Kneden, optillen en rollen van zacht weefsel.','Розминання, піднімання та перекочування м’яких тканин.','Разминание, приподнимание и перекатывание мягких тканей.'],
+    'Small, focused circular or cross-fibre movements.':['Kleine, gerichte cirkelvormige of dwarse bewegingen.','Невеликі точкові кругові рухи або рухи впоперек волокон.','Небольшие точечные круговые движения или движения поперёк волокон.'],
+    'Rhythmic tapping or percussion with relaxed hands.':['Ritmisch tikken of kloppen met ontspannen handen.','Ритмічне постукування розслабленими руками.','Ритмичные постукивания расслабленными руками.'],
+    'Sustained, rhythmic pressure with palm or forearm.':['Aanhoudende, ritmische druk met de handpalm of onderarm.','Тривалий ритмічний натиск долонею або передпліччям.','Продолжительное ритмічне давлення ладонею або передпліччям.'],
+    'Guided movement through a comfortable range.':['Geleide beweging binnen een comfortabel bereik.','Спрямований рух у комфортному діапазоні.','Направляемое движение в комфортному діапазоні.'],
+    'Student testimonials':['Ervaringen van cursisten','Відгуки студентів','Отзывы учеников'], 'In students\' own ':'In de eigen woorden van cursisten: ','Слова самих студентів: ','Слова самих студентов: ', 'words':'woorden','слова','слова',
+    'Placeholder':['Voorbeeld','Приклад','Заглушка'], 'Student feedback will appear here once real reviews have been collected.':['Hier komen ervaringen van cursisten zodra echte beoordelingen zijn verzameld.','Тут з’являться відгуки студентів, коли ми їх отримаємо.','Здесь появляться отзывы учеников, когда мы их соберём.'], 'Student name, course':['Naam student, cursus','Ім’я студента, курс','Имя ученика, курс'],
+    'Questions':['Vragen','Запитання','Вопросы'], 'Frequently asked ':'Veelgestelde ','Поширені ','Часто задаваемые ', 'questions.':['vragen.','запитання.','вопросы.'],
+    'Stay connected':['Blijf op de hoogte','Залишайтеся на зв’язку','Оставайтесь на связи'], 'Email address':['E-mailadres','Електронна пошта','Электронная почта'], 'Subscribe':['Abonneren','Підписатися','Подписаться'], 'Notify me':['Houd me op de hoogte','Сповістити мене','Уведомить меня'],
+    'More Than a Technique. ':'Meer dan een techniek. ','Більше, ніж техніка. ','Больше, чем техника. '], 'An Art.':['Een kunst.','Мистецтво.','Искусство.'], 'Philosophy':['Filosofie','Філософія','Философия'], 'Educational approach':['Onderwijsaanpak','Підхід до навчання','Подход к обучению'], 'Mission':['Missie','Місія','Миссия'], 'Good to know':['Goed om te weten','Варто знати','Полезно знать'],
+    'Choose a category, read the programme and buy on Gumroad.':['Kies een categorie, bekijk het programma en koop via Gumroad.','Оберіть категорію, ознайомтеся з програмою та придбайте курс на Gumroad.','Выберите категорию, изучите программу и приобретите курс на Gumroad.'], 'The courses shown here are sample entries. Titles, prices, durations and purchase links will be replaced with real course information.':['De cursussen hier zijn voorbeelden. Titels, prijzen, duur en links worden vervangen door echte cursusinformatie.','Наведені курси — приклади. Назви, ціни, тривалість і посилання буде замінено на актуальні дані.','Здесь представлены примеры курсов. Названия, цены, длительность и ссылки будут заменены актуальной информацией.'],
+    'All':['Alles','Усі','Все'], 'Filter courses by category':['Cursussen filteren op categorie','Фільтрувати курси за категорією','Фильтр курсов по категории'], ' course':[' cursus',' курс',' курс'], ' courses':[' cursussen',' курси',' курсов'], ' in ':' in ',' у категорії ',' в категории ',
+    'Sample course':['Voorbeeldcursus','Пробний курс','Пример курса'], 'Beginner':['Beginner','Початковий','Начальный'], 'Intermediate':['Gemiddeld','Середній','Средний'], 'All levels':['Alle niveaus','Усі рівні','Все уровни'],
+    'View course: ':'Bekijk cursus: ','Переглянути курс: ','Посмотреть курс: ', 'View Course':['Bekijk cursus','Переглянути курс','Посмотреть курс'], 'Get the Course':['Koop de cursus','Придбати курс','Купить курс'], 'You complete your purchase on Gumroad.':['Je rondt de aankoop af op Gumroad.','Покупка оформлюється на Gumroad.','Покупка оформляется на Gumroad.'], 'Coming soon':['Binnenkort beschikbaar','Незабаром','Скоро'], 'The purchase link has not been added yet.':['De aankooplink is nog niet toegevoegd.','Посилання на придбання ще не додано.','Ссылка для покупки ещё не добавлена.'],
+    'Breadcrumb':['Kruimelpad','Навігаційний ланцюжок','Навигационная цепочка'], 'Sample course':['Voorbeeldcursus','Пробний курс','Пример курса'], 'Level':['Niveau','Рівень','Уровень'], 'Duration':['Duur','Тривалість','Длительность'], 'Category':['Categorie','Категорія','Категория'], 'Purchase':['Aankoop','Придбання','Покупка'],
+    'Introduction':['Introductie','Вступ','Введение'], 'What you will learn':['Wat je leert','Чого ви навчитеся','Чему вы научитесь'], 'Course programme':['Cursusprogramma','Програма курсу','Программа курса'], 'Module ':'Module ','Модуль ','Модуль ', 'Who is this course for?':['Voor wie is deze cursus?','Для кого цей курс?','Для кого этот курс?'], 'Format and materials':['Opzet en materialen','Формат і матеріали','Формат и материалы'], 'Learning format':['Leervorm','Формат навчання','Формат обучения'], 'Included materials':['Inbegrepen materialen','Матеріали курсу','Материалы курса'], 'Ready to begin?':['Klaar om te beginnen?','Готові почати?','Готовы начать?'], 'Continue learning':['Verder leren','Продовжуйте навчання','Продолжайте обучение'], 'More ':'Meer ','Більше ','Больше ', ' courses.':' cursussen.',' курсів.',' курсов.',
+    'Say ':'Zeg ','Скажіть ','Скажите ', 'hello.':'hallo.','привіт.','привет.','Questions about a course or about TOTA? Write to us and we will reply.':['Vragen over een cursus of TOTA? Schrijf ons, dan antwoorden we.','Маєте запитання про курс або TOTA? Напишіть нам — ми відповімо.','Есть вопросы о курсе или TOTA? Напишите нам — мы ответим.'], 'Email':['E-mail','Електронна пошта','Электронная почта'], 'Copy':['Kopiëren','Копіювати','Копировать'], 'Follow':['Volg ons','Стежте за нами','Мы в соцсетях'], 'Name':['Naam','Ім’я','Имя'], 'Topic':['Onderwerp','Тема','Тема'], 'A question about a course':['Vraag over een cursus','Запитання про курс','Вопрос о курсе'], 'Partnership':['Samenwerking','Співпраця','Сотрудничество'], 'Something else':['Anders','Інше','Другое'], 'Message':['Bericht','Повідомлення','Сообщение'], 'Send message':['Bericht verzenden','Надіслати повідомлення','Отправить сообщение'],
+    'Legal':['Juridisch','Юридична інформація','Юридическая информация'], 'Privacy Policy':['Privacybeleid','Політика конфіденційності','Политика конфиденциальности'], 'Terms and Conditions':['Algemene voorwaarden','Умови використання','Условия использования'], 'This page is a placeholder. Replace it with your own text before launch and have it reviewed by a qualified professional.':['Deze pagina is een voorbeeld. Vervang de tekst vóór publicatie en laat deze door een deskundige controleren.','Ця сторінка є шаблоном. Замініть текст перед запуском і попросіть фахівця його перевірити.','Эта страница — шаблон. Замените текст до запуска и попросите специалиста его проверить.'], 'It should cover at least:':['Neem ten minste het volgende op:','Сторінка має охоплювати щонайменше:','Укажите как минимум:'],
+    'Explore':['Ontdek','Досліджуйте','Разделы'], 'Follow':['Volg ons','Стежте за нами','Мы в соцсетях'], 'Knowledge, technique and the art of touch, taught with care.':['Kennis, techniek en de kunst van aanraking, met aandacht onderwezen.','Знання, техніка й мистецтво дотику, викладені з турботою.','Знания, техника и искусство прикосновения, которым учат бережно.'], 'Privacy Policy':['Privacybeleid','Політика конфіденційності','Политика конфиденциальности'], 'Courses are hosted on Gumroad.':['Cursussen worden gehost op Gumroad.','Курси розміщені на Gumroad.','Курсы размещены на Gumroad.'],
+    'Address selected. Press copy on your keyboard.':['Adres geselecteerd. Kopieer met je toetsenbord.','Адресу виділено. Скопіюйте її клавіатурою.','Адрес выделен. Скопируйте его с клавиатуры.'], 'Email address copied.':['E-mailadres gekopieerd.','Електронну адресу скопійовано.','Электронный адрес скопирован.'], 'Please complete the required fields with a valid email address.':['Vul de verplichte velden in met een geldig e-mailadres.','Заповніть обов’язкові поля та вкажіть коректну електронну адресу.','Заполните обязательные поля и укажите корректный адрес электронной почты.'], 'Sign-up is not active yet. Please check back soon.':['Aanmelden is nog niet beschikbaar. Kom later terug.','Підписка ще не працює. Будь ласка, завітайте пізніше.','Подписка пока недоступна. Загляните позже.'], 'This form is not connected yet. Please write to us at ':['Dit formulier is nog niet gekoppeld. Mail ons op ','Форма ще не підключена. Напишіть нам на ','Форма ещё не подключена. Напишите нам на '],
+    'Relaxation Massage':['Ontspanningsmassage','Розслаблювальний масаж','Расслабляющий массаж'], 'Therapeutic Massage':['Therapeutische massage','Терапевтичний масаж','Терапевтический массаж'], 'Deep Tissue Massage':['Diepe weefselmassage','Глибокотканинний масаж','Глубокотканный массаж'], 'Sports Massage':['Sportmassage','Спортивний масаж','Спортивный массаж'], 'Facial Massage':['Gezichtsmassage','Масаж обличчя','Массаж лица'], 'Body Techniques':['Lichaamstechnieken','Техніки для тіла','Техники для тіла'], 'Professional Development':['Professionele ontwikkeling','Професійний розвиток','Профессиональное развитие'],
+    'Relaxation Massage Foundations':['Basis ontspanningsmassage','Основи розслаблювального масажу','Основы расслабляющего массажа'], 'Deep Tissue Principles':['Principes van diepe weefselmassage','Принципи глибокотканинного масажу','Принципы глубокотканного массажа'], 'Facial Massage Rituals':['Rituelen voor gezichtsmassage','Ритуали масажу обличчя','Ритуалы массажа лица'], 'Sports Massage Essentials':['Basis sportmassage','Основи спортивного масажу','Основы спортивного массажа'], 'Neck and Shoulder Techniques':['Technieken voor nek en schouders','Техніки для шиї та плечей','Техники для шеи и плеч'], 'Building Your Massage Practice':['Je massagepraktijk opbouwen','Розвиток масажної практики','Развитие массажной практики'],
+    'A calm, complete full-body routine built on essential strokes, pacing and posture.':['Een rustige, complete lichaamsroutine met essentiële technieken, tempo en houding.','Спокійна повна процедура для всього тіла: базові прийоми, темп і постава.','Спокойная полноценная процедура для всего тела: основные приёмы, темп и осанка.'],
+    'Slow, precise pressure: how to work deeper with control and without strain.':['Langzame, precieze druk: dieper werken met controle en zonder overbelasting.','Повільний точний натиск: як працювати глибше, контрольовано й без перенапруження.','Медленное точное давление: как работать глубже, контролируя усилие и не перенапрягаясь.'],
+    'Gentle, rhythmic facial techniques for face, neck and decolletage.':['Zachte, ritmische technieken voor gezicht, hals en decolleté.','М’які ритмічні техніки для обличчя, шиї та декольте.','Мягкие ритмичные техники для лица, шеи и декольте.'],
+    'Pre-event, post-event and maintenance techniques for active people.':['Technieken voor actieve mensen vóór en na een evenement en voor onderhoud.','Техніки для активних людей до й після змагань та для підтримки форми.','Техники для активных людей до и после соревнований и для поддержания формы.'],
+    'Focused techniques for the neck, shoulders and upper back.':['Gerichte technieken voor nek, schouders en bovenrug.','Цільові техніки для шиї, плечей і верхньої частини спини.','Прицельные техники для шеи, плеч и верхней части спины.'],
+    'Set up, price, present and grow a massage practice you enjoy running.':['Richt je massagepraktijk in, bepaal prijzen, presenteer en laat haar groeien.','Створіть, оцініть і розвивайте масажну практику, якою вам приємно керувати.','Создайте, оцените и развивайте массажную практику, которой приятно заниматься.'],
+    'Please complete the required fields with a valid email address.':['Vul de verplichte velden in met een geldig e-mailadres.','Заповніть обов’язкові поля та вкажіть коректну електронну адресу.','Заполните обязательные поля и укажите корректный адрес электронной почты.'], 'Sign-up is not active yet. Please check back soon.':['Aanmelden is nog niet beschikbaar. Kom later terug.','Підписка ще не працює. Будь ласка, завітайте пізніше.','Подписка пока недоступна. Загляните позже.'], 'This form is not connected yet. Please write to us at ':['Dit formulier is nog niet gekoppeld. Mail ons op ','Форма ще не підключена. Напишіть нам на ','Форма ещё не подключена. Напишите нам на '], 'Address selected. Press copy on your keyboard.':['Adres geselecteerd. Kopieer met je toetsenbord.','Адресу виділено. Скопіюйте її клавіатурою.','Адрес выделен. Скопируйте его с клавиатуры.'], 'Email address copied.':['E-mailadres gekopieerd.','Електронну адресу скопійовано.','Электронный адрес скопирован.']
+  }; */
+  var translations = {
+    'Home':['Home','Головна','Главная'], 'About':['Over ons','Про нас','О нас'], 'Courses':['Cursussen','Курси','Курсы'], 'Contact':['Contact','Контакти','Контакты'],
+    'Menu':['Menu','Меню','Меню'], 'Skip to content':['Ga naar inhoud','Перейти до вмісту','Перейти к содержимому'],
+    'Online massage education':['Online massageopleidingen','Онлайн-навчання масажу','Онлайн-обучение массажу'], 'Master the ':['Beheers de ','Опануйте ','Освойте '], '<em>Art</em>':['<em>kunst</em>','<em>мистецтво</em>','<em>искусство</em>'], ' of Touch.':[' van aanraking.',' дотику.',' прикосновения.'],
+    'Discover the knowledge, techniques and philosophy behind professional massage.':['Ontdek de kennis, technieken en filosofie achter professionele massage.','Відкрийте знання, техніки та філософію професійного масажу.','Откройте знания, техники и философию профессионального массажа.'],
+    'Explore Courses':['Bekijk cursussen','Переглянути курси','Смотреть курсы'], 'About TATA':['Over TATA','Про TATA','О TATA'], 'Introduction':['Introductie','Вступ','Введение'], '<h2>An academy for people who work with their <em>hands</em>.</h2>':['<h2>Een academie voor mensen die met hun <em>handen</em> werken.</h2>','<h2>Академія для тих, хто працює <em>руками</em>.</h2>'], 'An academy for people who work with their ':['Een academie voor mensen die met hun ','Академія для тих, хто працює своїми ','Академия для тех, кто работает '], 'hands.':['handen.','руками.','руками.'],
+    'Knowledge':['Kennis','Знання','Знания'], 'Technique':['Techniek','Техніка','Техника'], 'Body awareness':['Lichaamsbewustzijn','Усвідомлення тіла','Осознанность тела'], 'Human touch':['Menselijke aanraking','Людяний дотик','Человеческое прикосновение'],
+    'Featured courses':['Uitgelichte cursussen','Рекомендовані курси','Рекомендуемые курсы'], '<h2>Begin with <em>one</em> course.</h2>':['<h2>Begin met <em>één</em> cursus.</h2>','<h2>Почніть з <em>одного</em> курсу.</h2>'], 'All courses':['Alle cursussen','Усі курси','Все курсы'], 'Our philosophy':['Onze filosofie','Наша філософія','Наша философия'],
+    'Touch is a language. Learning it takes attention, patience and a clear understanding of how the body moves.':['Aanraking is een taal. Je leert haar met aandacht, geduld en een goed begrip van hoe het lichaam beweegt.','Дотик — це мова. Щоб опанувати її, потрібні уважність, терпіння та чітке розуміння рухів тіла.'],
+    'Read our approach':['Lees onze aanpak','Ознайомтеся з нашим підходом'], 'The art of touch.':['De kunst van aanraking.','Мистецтво дотику.'], 'The science of movement.':['De wetenschap van beweging.','Наука руху.'], 'The knowledge of touch.':['De kennis van aanraking.','Знання дотику.'],
+    'Why learn with TATA':['Waarom leren bij TATA','Чому варто навчатися в TATA','Почему стоит учиться в TATA'], '<h2>Clear structure, <em>calm</em> pace.</h2>':['<h2>Heldere structuur, <em>rustig</em> tempo.</h2>','<h2>Чітка структура, <em>спокійний</em> темп.</h2>'], 'Structured programmes':['Gestructureerde programma’s','Структуровані програми','Структурированные программы'], 'Each course is a sequence of modules, from preparation to the finishing stroke.':['Elke cursus bestaat uit modules, van de voorbereiding tot de laatste beweging.','Кожен курс складається з модулів: від підготовки до завершального прийому.'], 'Technique with reasons':['Techniek met uitleg','Техніка з поясненнями','Техника с объяснением'], 'Movements are explained with the thinking behind them: pressure, direction and pace.':['We leggen uit waarom elke beweging werkt: druk, richting en tempo.','Ми пояснюємо логіку кожного руху: силу натиску, напрямок і темп.'], 'Your own pace':['In je eigen tempo','У власному темпі','В своём темпе'], 'Lessons are self-paced, so you can repeat a module until it feels natural.':['Je volgt de lessen in je eigen tempo en herhaalt een module tot de bewegingen natuurlijk aanvoelen.','Навчайтеся у власному темпі й повторюйте модуль, доки рухи не стануть природними.'], 'No surprises':['Geen verrassingen','Без несподіванок','Без сюрпризов'], 'Every course page lists the programme and materials before you buy. Checkout is handled by Gumroad.':['Op elke cursuspagina staan het programma en de materialen voordat je koopt. De betaling verloopt via Gumroad.','На сторінці кожного курсу зазначено програму й матеріали до придбання. Оплата здійснюється через Gumroad.'], 'Massage techniques':['Massagetechnieken','Техніки масажу','Техники массажа'], 'Student testimonials':['Ervaringen van cursisten','Відгуки студентів','Отзывы учеников'], 'Placeholder':['Voorbeeld','Приклад','Заглушка'], 'Questions':['Vragen','Запитання','Вопросы'], 'Frequently asked ':['Veelgestelde ','Поширені ','Часто задаваемые '], 'questions.':['vragen.','запитання.','вопросы.'],
+    'About TATA':['Over TATA','Про TATA','О TATA'], 'More Than a Technique. ':['Meer dan een techniek. ','Більше, ніж техніка. ','Больше, чем техника. '], 'An Art.':['Een kunst.','Мистецтво.','Искусство.'], 'Philosophy':['Filosofie','Філософія','Философия'], '<h2>Four things that make a <em>session</em>.</h2>':['<h2>Vier elementen van een <em>sessie</em>.</h2>','<h2>Чотири складові <em>сеансу</em>.</h2>'], 'Knowledge':['Kennis','Знання','Знания'], 'Understanding the body, the reason for each movement and the limits of what you do.':['Het lichaam begrijpen, weten waarom elke beweging wordt uitgevoerd en je eigen grenzen kennen.','Розуміти тіло, призначення кожного руху та межі власної практики.'], 'Strokes that are precise, repeatable and kind to your own hands and back.':['Nauwkeurige, herhaalbare technieken die je handen en rug ontzien.','Точні й відтворювані прийоми, що бережуть ваші руки та спину.'], 'Noticing posture, breath and tension, in the person you work with and in yourself.':['Houding, ademhaling en spanning opmerken bij jezelf en degene met wie je werkt.','Помічати поставу, дихання й напруження — як у людини, з якою ви працюєте, так і у себе.'], 'Quality of touch':['Kwaliteit van aanraking','Якість дотику'], 'Presence, pace and intention. The part that cannot be reduced to a diagram.':['Aandacht, tempo en intentie: dat laat zich niet in een diagram vangen.','Присутність, темп і намір. Те, що неможливо передати однією лише схемою.'], 'Educational approach':['Onderwijsaanpak','Підхід до навчання','Подход к обучению'], '<h2>Learn in <em>layers</em>.</h2>':['<h2>Leer in <em>lagen</em>.</h2>','<h2>Навчайтеся <em>поступово</em>.</h2>'], 'Each course begins with preparation and fundamentals, then adds technique one layer at a time. Lessons are structured as modules, so you always know where you are and what comes next.':['Elke cursus begint met de voorbereiding en basis, waarna de technieken stap voor stap worden opgebouwd. De lessen zijn ingedeeld in modules, zodat je altijd weet waar je bent en wat volgt.','Кожен курс починається з підготовки та основ, а потім техніка опановується крок за кроком. Уроки поділено на модулі, тож ви завжди знаєте, на якому етапі перебуваєте і що буде далі.'], 'We explain the reasoning behind movements, not just the movements themselves. When you understand why a stroke works, you can adapt it to the person in front of you.':['We leggen niet alleen de bewegingen uit, maar ook waarom ze werken. Als je begrijpt waarom een techniek werkt, kun je die aanpassen aan de persoon voor je.','Ми пояснюємо не лише самі рухи, а й логіку, що за ними стоїть. Розуміючи, чому певний прийом працює, ви зможете адаптувати його до людини перед вами.'], 'Courses are self-paced and hosted on Gumroad, so you can return to any module as often as you need.':['Je volgt de cursussen in je eigen tempo op Gumroad en kunt elke module zo vaak opnieuw bekijken als nodig.','Курси розміщені на Gumroad і проходять у власному темпі, тож ви можете повертатися до будь-якого модуля скільки потрібно.'], 'Mission':['Missie','Місія','Миссия'], 'Good to know':['Goed om te weten','Варто знати','Полезно знать'],
+    'Choose a category, read the programme and buy on Gumroad.':['Kies een categorie, bekijk het programma en koop via Gumroad.','Оберіть категорію, ознайомтеся з програмою та придбайте курс на Gumroad.','Выберите категорию, изучите программу и приобретите курс на Gumroad.'], 'The courses shown here are sample entries. Titles, prices, durations and purchase links will be replaced with real course information.':['De cursussen hier zijn voorbeelden. Titels, prijzen, duur en links worden vervangen door echte cursusinformatie.','Наведені курси — приклади. Назви, ціни, тривалість і посилання буде замінено на актуальні дані.','Здесь представлены примеры курсов. Названия, цены, длительность и ссылки будут заменены актуальной информацией.'],
+    'All':['Alles','Усі','Все'], 'Filter courses by category':['Cursussen filteren op categorie','Фільтрувати курси за категорією','Фильтр курсов по категории'], 'The course ':['De cursus-','Каталог ','Каталог '], 'catalogue':['catalogus','курсів','курсов'], ' course':[' cursus',' курс',' курс'], ' courses':[' cursussen',' курси',' курсов'], 'Sample course':['Voorbeeldcursus','Пробний курс','Пример курса'], 'Beginner':['Beginner','Початковий','Начальный'], 'Intermediate':['Gemiddeld','Середній','Средний'], 'All levels':['Alle niveaus','Усі рівні','Все уровни'],
+    'View Course':['Bekijk cursus','Переглянути курс','Посмотреть курс'], 'Get the Course':['Koop de cursus','Придбати курс','Купить курс'], 'You complete your purchase on Gumroad.':['Je rondt de aankoop af op Gumroad.','Покупка оформлюється на Gumroad.','Покупка оформляется на Gumroad.'], 'Coming soon':['Binnenkort beschikbaar','Незабаром','Скоро'], 'The purchase link has not been added yet.':['De aankooplink is nog niet toegevoegd.','Посилання на придбання ще не додано.','Ссылка для покупки ещё не добавлена.'],
+    'Level':['Niveau','Рівень','Уровень'], 'Duration':['Duur','Тривалість','Длительность'], 'Category':['Categorie','Категорія','Категория'], 'What you will learn':['Wat je leert','Чого ви навчитеся','Чему вы научитесь'], 'Course programme':['Cursusprogramma','Програма курсу','Программа курса'], 'Who is this course for?':['Voor wie is deze cursus?','Для кого цей курс?','Для кого этот курс?'], 'Format and materials':['Opzet en materialen','Формат і матеріали','Формат и материалы'], 'Learning format':['Leervorm','Формат навчання','Формат обучения'], 'Included materials':['Inbegrepen materialen','Матеріали курсу','Материалы курса'], 'Ready to begin?':['Klaar om te beginnen?','Готові почати?','Готовы начать?'], 'Continue learning':['Verder leren','Продовжуйте навчання','Продолжайте обучение'],
+    'Questions about a course or about TATA? Write to us and we will reply.':['Vragen over een cursus of TATA? Schrijf ons, dan antwoorden we.','Маєте запитання про курс або TATA? Напишіть нам — ми відповімо.','Есть вопросы о курсе или TATA? Напишите нам — мы ответим.'], 'Copy':['Kopiëren','Копіювати','Копировать'], 'Follow':['Volg ons','Стежте за нами','Мы в соцсетях'], 'Name':['Naam','Ім’я','Имя'], 'Topic':['Onderwerp','Тема','Тема'], 'A question about a course':['Vraag over een cursus','Запитання про курс','Вопрос о курсе'], 'Partnership':['Samenwerking','Співпраця','Сотрудничество'], 'Something else':['Anders','Інше','Другое'], 'Message':['Bericht','Повідомлення','Сообщение'], 'Send message':['Bericht verzenden','Надіслати повідомлення','Отправить сообщение'],
+    'Legal':['Juridisch','Юридична інформація','Юридическая информация'], 'Privacy Policy':['Privacybeleid','Політика конфіденційності','Политика конфиденциальности'], 'Terms and Conditions':['Algemene voorwaarden','Умови використання','Условия использования'], 'Courses are hosted on Gumroad.':['Cursussen worden gehost op Gumroad.','Курси розміщені на Gumroad.','Курсы размещены на Gumroad.'],
+    'This page is a placeholder. Replace it with your own text before launch and have it reviewed by a qualified professional.':['Deze pagina is een voorbeeldtekst. Vervang deze vóór publicatie door je eigen tekst en laat die controleren door een gekwalificeerde jurist.','Ця сторінка містить шаблонний текст. Перед запуском замініть його власним і попросіть кваліфікованого юриста перевірити документ.','На этой странице размещён шаблон. До запуска замените его собственным текстом и попросите квалифицированного юриста проверить документ.'], 'It should cover at least:':['Neem ten minste het volgende op:','Документ має охоплювати щонайменше:','Документ должен охватывать как минимум:'],
+    'Who operates the website and the courses':['Wie de website en cursussen beheert','Хто керує сайтом і курсами','Кто управляет сайтом и курсами'],
+    'What a purchase includes and where it takes place (Gumroad)':['Wat bij een aankoop is inbegrepen en waar deze plaatsvindt (Gumroad)','Що входить у покупку та де вона здійснюється (Gumroad)','Что входит в покупку и где она оформляется (Gumroad)'],
+    'Use of course materials and copyright':['Het gebruik van cursusmateriaal en het auteursrecht','Використання матеріалів курсу та авторське право','Использование материалов курса и авторские права'],
+    'Refunds and how they are handled':['Terugbetalingen en de afhandeling daarvan','Повернення коштів і порядок їх оформлення','Возвраты средств и порядок их оформления'],
+    'Limits of liability and the educational nature of the content':['Beperking van aansprakelijkheid en het educatieve karakter van de inhoud','Обмеження відповідальності та навчальний характер матеріалів','Ограничение ответственности и образовательный характер материалов'],
+    'Relaxation Massage':['Ontspanningsmassage','Розслаблювальний масаж','Расслабляющий массаж'], 'Therapeutic Massage':['Therapeutische massage','Терапевтичний масаж','Терапевтический массаж'], 'Deep Tissue Massage':['Diepe weefselmassage','Глибокотканинний масаж','Глубокотканный массаж'], 'Sports Massage':['Sportmassage','Спортивний масаж','Спортивный массаж'], 'Facial Massage':['Gezichtsmassage','Масаж обличчя','Массаж лица'], 'Body Techniques':['Lichaamstechnieken','Техніки для тіла','Техники для тела'], 'Professional Development':['Professionele ontwikkeling','Професійний розвиток','Профессиональное развитие'],
+    'Relaxation Massage Foundations':['Basis ontspanningsmassage','Основи розслаблювального масажу','Основы расслабляющего массажа'], 'Deep Tissue Principles':['Principes van diepe weefselmassage','Принципи глибокотканинного масажу','Принципы глубокотканного массажа'], 'Facial Massage Rituals':['Rituelen voor gezichtsmassage','Ритуали масажу обличчя','Ритуалы массажа лица'], 'Sports Massage Essentials':['Basis sportmassage','Основи спортивного масажу','Основы спортивного массажа'], 'Neck and Shoulder Techniques':['Technieken voor nek en schouders','Техніки для шиї та плечей','Техники для шеи и плеч'], 'Building Your Massage Practice':['Je massagepraktijk opbouwen','Розвиток масажної практики','Развитие массажной практики'],
+    'A calm, complete full-body routine built on essential strokes, pacing and posture.':['Een rustige, complete lichaamsroutine met essentiële technieken, tempo en houding.','Спокійна повна процедура для всього тіла: базові прийоми, темп і постава.','Спокойная полноценная процедура для всего тела: основные приёмы, темп и осанка.'],
+    'Slow, precise pressure: how to work deeper with control and without strain.':['Langzame, precieze druk: dieper werken met controle en zonder overbelasting.','Повільний точний натиск: як працювати глибше, контрольовано й без перенапруження.','Медленное точное давление: как работать глубже, контролируя усилие и не перенапрягаясь.'],
+    'Gentle, rhythmic facial techniques for face, neck and decolletage.':['Zachte, ritmische technieken voor gezicht, hals en decolleté.','М’які ритмічні техніки для обличчя, шиї та декольте.','Мягкие ритмичные техники для лица, шеи и декольте.'],
+    'Pre-event, post-event and maintenance techniques for active people.':['Technieken voor actieve mensen vóór en na een evenement en voor onderhoud.','Техніки для активних людей до й після змагань та для підтримки форми.','Техники для активных людей до и после соревнований и для поддержания формы.'],
+    'Focused techniques for the neck, shoulders and upper back.':['Gerichte technieken voor nek, schouders en bovenrug.','Цільові техніки для шиї, плечей і верхньої частини спини.','Прицельные техники для шеи, плеч и верхней части спины.'],
+    'Set up, price, present and grow a massage practice you enjoy running.':['Richt je massagepraktijk in, bepaal prijzen, presenteer en laat haar groeien.','Створіть, оцініть і розвивайте масажну практику, якою вам приємно керувати.','Создайте, оцените и развивайте массажную практику, которой приятно заниматься.'],
+    'Explore':['Ontdek','Досліджуйте','Разделы'], 'Privacy Policy':['Privacybeleid','Політика конфіденційності','Политика конфиденциальности'], 'Terms and Conditions':['Algemene voorwaarden','Умови використання','Условия использования'],
+    'Please complete the required fields with a valid email address.':['Vul de verplichte velden in met een geldig e-mailadres.','Заповніть обов’язкові поля та вкажіть коректну електронну адресу.','Заполните обязательные поля и укажите корректный адрес электронной почты.'], 'Sign-up is not active yet. Please check back soon.':['Aanmelden is nog niet beschikbaar. Kom later terug.','Підписка ще не працює. Будь ласка, завітайте пізніше.','Подписка пока недоступна. Загляните позже.'], 'This form is not connected yet. Please write to us at ':['Dit formulier is nog niet gekoppeld. Mail ons op ','Форма ще не підключена. Напишіть нам на ','Форма ещё не подключена. Напишите нам на '], 'Address selected. Press copy on your keyboard.':['Adres geselecteerd. Kopieer met je toetsenbord.','Адресу виділено. Скопіюйте її клавіатурою.','Адрес выделен. Скопируйте его с клавиатуры.'], 'Email address copied.':['E-mailadres gekopieerd.','Електронну адресу скопійовано.','Электронный адрес скопирован.'],
+    'Approx. 3 hours (sample)':['Ongeveer 3 uur (voorbeeld)','Приблизно 3 години (приклад)','Около 3 часов (пример)'], 'Approx. 4 hours (sample)':['Ongeveer 4 uur (voorbeeld)','Приблизно 4 години (приклад)','Около 4 часов (пример)'], 'Approx. 5 hours (sample)':['Ongeveer 5 uur (voorbeeld)','Приблизно 5 годин (приклад)','Около 5 часов (пример)'], 'Approx. 6 hours (sample)':['Ongeveer 6 uur (voorbeeld)','Приблизно 6 годин (приклад)','Около 6 часов (пример)'],
+    'Knowledge, technique and the art of touch, taught with care.':['Kennis, techniek en de kunst van aanraking, met aandacht onderwezen.','Знання, техніка й мистецтво дотику, викладені з турботою.','Знания, техника и искусство прикосновения, которым учат бережно.'], 'Massage combines knowledge, technique, body awareness and the quality of human touch. TATA teaches all four.':['Massage combineert kennis, techniek, lichaamsbewustzijn en de kwaliteit van menselijke aanraking. TATA leert ze alle vier.','Масаж поєднує знання, техніку, усвідомлення тіла та якість людського дотику. TATA навчає всіх чотирьох складових.','Массаж объединяет знания, технику, осознанность тела и качество человеческого прикосновения. TATA обучает всем четырём составляющим.'],
+    'Why a movement works, not only how it looks.':['Waarom een beweging werkt, niet alleen hoe die eruitziet.','Чому рух працює, а не лише як він виглядає.','Почему движение работает, а не только как оно выглядит.'], 'Clear, repeatable strokes practised step by step.':['Duidelijke, herhaalbare technieken die stap voor stap worden geoefend.','Чіткі повторювані прийоми, які відпрацьовуються крок за кроком.','Чёткие повторяемые приёмы, отрабатываемые шаг за шагом.'], 'Attention to posture, breath and tension, yours and theirs.':['Aandacht voor houding, ademhaling en spanning, bij jezelf en de ander.','Увага до постави, дихання та напруження — вашого й партнера.','Внимание к осанке, дыханию и напряжению — вашему и клиента.'], 'The care and presence that make a session feel right.':['De aandacht en aanwezigheid die een sessie goed laten voelen.','Турбота й уважність, що створюють правильну атмосферу сеансу.','Забота и присутствие, благодаря которым сеанс проходит комфортно.'],
+    'TATA is an online academy for massage techniques, professional development and the art of therapeutic and wellness touch. Every course is built around the same idea: good massage is knowledge, technique, body awareness and the quality of touch, working together.':['TATA is een online academie voor massagetechnieken, professionele ontwikkeling en de kunst van therapeutische en wellness-aanraking. Elke cursus vertrekt vanuit hetzelfde idee: goede massage combineert kennis, techniek, lichaamsbewustzijn en de kwaliteit van aanraking.','TATA — онлайн-академія технік масажу, професійного розвитку та мистецтва терапевтичного й оздоровчого дотику. Усі курси ґрунтуються на одній ідеї: якісний масаж поєднує знання, техніку, усвідомлення тіла та якість дотику.','TATA — онлайн-академия массажных техник, профессионального развития и искусства терапевтического и оздоровительного прикосновения. Все курсы основаны на одной идее: хороший массаж объединяет знания, технику, осознанность тела и качество прикосновения.'],
+    'Massage Courses | The Art of Touch Academy':['Massagecursussen | The Art of Touch Academy','Курси масажу | The Art of Touch Academy','Курсы массажа | The Art of Touch Academy'], 'Contact | The Art of Touch Academy':['Contact | The Art of Touch Academy','Контакти | The Art of Touch Academy','Контакты | The Art of Touch Academy'], 'About TATA | The Art of Touch Academy':['Over TATA | The Art of Touch Academy','Про TATA | The Art of Touch Academy','О TATA | The Art of Touch Academy'],
+    'Say ':['Zeg ','Скажіть ','Скажите '], '<em>hello</em>':['<em>hallo</em>','<em>привіт</em>','<em>привет</em>'], 'Email':['E-mail','Електронна пошта','Электронная почта']
+  };
+  translations['Careful massage education, open to anyone who wants to learn it properly.'] = [
+    'Zorgvuldig massageonderwijs, toegankelijk voor iedereen die het goed wil leren.',
+    'Дбайливе навчання масажу для кожного, хто прагне опанувати його як слід.'
+  ];
+  translations['<h2>What TATA <em>is</em> and is not.</h2>'] = [
+    '<h2>Wat TATA <em>wel</em> en niet is.</h2>',
+    '<h2>Що таке TATA і чим вона не є.</h2>'
+  ];
+  translations['TATA courses are educational. They teach technique and theory and do not replace medical advice, local training or licensing requirements. Unless a course page states otherwise, no certificate or accreditation is included.'] = [
+    'De cursussen van TATA zijn educatief. Ze behandelen technieken en theorie, maar vervangen geen medisch advies, lokale opleiding of vergunningsvereisten. Tenzij een cursuspagina anders vermeldt, zijn er geen certificaat of accreditatie inbegrepen.',
+    'Курси TATA мають освітній характер. Вони навчають технік і теорії та не замінюють медичної консультації, місцевої професійної підготовки чи вимог щодо ліцензування. Якщо на сторінці курсу не зазначено інше, сертифікат або акредитація не надаються.'
+  ];
+  translations['Get in touch'] = ['Neem contact op','Зв’язатися з нами'];
+  translations['<h2>The movements behind the <em>practice</em>.</h2>'] = [
+    '<h2>De bewegingen achter de <em>praktijk</em>.</h2>',
+    '<h2>Рухи, що лежать в основі <em>практики</em>.</h2>'
+  ];
+  translations['A few of the classical techniques you meet across our courses.'] = [
+    'Een paar klassieke technieken die in onze cursussen aan bod komen.',
+    'Кілька класичних технік, які вивчають на наших курсах.'
+  ];
+  translations['Long, gliding strokes that spread oil and warm the tissue.'] = [
+    'Lange, glijdende bewegingen die olie verdelen en het weefsel opwarmen.',
+    'Довгі плавні рухи, що розподіляють олію та розігрівають тканини.'
+  ];
+  translations['Kneading, lifting and rolling of soft tissue.'] = [
+    'Het kneden, optillen en rollen van zacht weefsel.',
+    'Розминання, піднімання та перекочування м’яких тканин.'
+  ];
+  translations['Small, focused circular or cross-fibre movements.'] = [
+    'Kleine, gerichte cirkelvormige bewegingen of bewegingen dwars op de vezels.',
+    'Невеликі цілеспрямовані кругові рухи або рухи впоперек волокон.'
+  ];
+  translations['Rhythmic tapping or percussion with relaxed hands.'] = [
+    'Ritmisch tikken of kloppen met ontspannen handen.',
+    'Ритмічні постукування розслабленими руками.'
+  ];
+  translations['Sustained, rhythmic pressure with palm or forearm.'] = [
+    'Aanhoudende, ritmische druk met de handpalm of onderarm.',
+    'Тривалий ритмічний натиск долонею або передпліччям.'
+  ];
+  translations['Guided movement through a comfortable range.'] = [
+    'Geleide beweging binnen een comfortabel bewegingsbereik.',
+    'Керований рух у комфортному діапазоні.'
+  ];
+  translations['Effleurage'] = ['Effleurage','Погладжування (Effleurage)'];
+  translations['Petrissage'] = ['Petrissage','Розминання (Petrissage)'];
+  translations['Friction'] = ['Friction','Розтирання (Friction)'];
+  translations['Tapotement'] = ['Tapotement','Постукування (Tapotement)'];
+  translations['Compression'] = ['Compression','Компресія (Compression)'];
+  translations['Stretching'] = ['Stretching','Розтягування (Stretching)'];
+  translations['<h2>Frequently asked <em>questions</em>.</h2>'] = [
+    '<h2>Veelgestelde <em>vragen</em>.</h2>',
+    '<h2>Поширені <em>запитання</em>.</h2>'
+  ];
+  translations['Where are the lessons hosted?'] = ['Waar worden de lessen gehost?','Де розміщені уроки?'];
+  translations['Lessons, downloads and course materials are hosted on Gumroad. This website presents the academy and its courses, and each course page sends you to Gumroad to complete your purchase.'] = [
+    'Lessen, downloads en cursusmateriaal staan op Gumroad. Deze website presenteert de academie en haar cursussen; op elke cursuspagina kun je via Gumroad je aankoop afronden.',
+    'Уроки, завантаження та матеріали курсів розміщені на Gumroad. На цьому сайті представлено академію та її курси, а сторінка кожного курсу спрямовує на Gumroad для оформлення покупки.'
+  ];
+  translations['Do I need experience to start?'] = ['Heb ik ervaring nodig om te beginnen?','Чи потрібен досвід, щоб почати?'];
+  translations['Not always. Every course shows its level, from Beginner to Intermediate, so you can choose what fits.'] = [
+    'Niet altijd. Bij elke cursus staat het niveau, van beginner tot gemiddeld, zodat je kunt kiezen wat bij je past.',
+    'Не завжди. Для кожного курсу вказано рівень — від початкового до середнього, тож ви зможете обрати те, що вам підходить.'
+  ];
+  translations['Is a certificate included?'] = ['Is een certificaat inbegrepen?','Чи передбачено сертифікат?'];
+  translations['Unless a course page says otherwise, no certificate or accreditation is included. Courses are educational programmes.'] = [
+    'Tenzij de cursuspagina anders vermeldt, zijn er geen certificaat of accreditatie inbegrepen. De cursussen zijn educatieve programma’s.',
+    'Якщо на сторінці курсу не зазначено інше, сертифікат або акредитація не передбачені. Курси мають освітній характер.'
+  ];
+  translations['Can I learn massage fully online?'] = ['Kan ik volledig online massage leren?','Чи можна повністю опанувати масаж онлайн?'];
+  translations['Online courses teach technique, structure and theory. Practising with real people matters, and requirements to work professionally differ by country, so please check your local rules.'] = [
+    'Online cursussen leren je technieken, opbouw en theorie. Oefenen met echte mensen blijft belangrijk. De vereisten voor professioneel werk verschillen per land; controleer daarom de lokale regelgeving.',
+    'Онлайн-курси навчають технік, структури та теорії. Важливо практикуватися з людьми, а вимоги до професійної діяльності відрізняються залежно від країни, тож перевірте місцеві правила.'
+  ];
+  translations['How do I get access after buying?'] = ['Hoe krijg ik toegang na aankoop?','Як отримати доступ після покупки?'];
+  translations['You buy on Gumroad and receive access through their platform. The course page and the Gumroad page list what is included.'] = [
+    'Je koopt de cursus via Gumroad en krijgt toegang via hun platform. Op de cursuspagina en Gumroad-pagina staat wat is inbegrepen.',
+    'Після покупки на Gumroad ви отримаєте доступ через їхню платформу. Перелік матеріалів доступний на сторінці курсу та на Gumroad.'
+  ];
+  translations['Terms are set per course on its Gumroad page. Please read them before you buy.'] = [
+    'De voorwaarden verschillen per cursus en staan op de Gumroad-pagina. Lees ze vóór aankoop.',
+    'Умови повернення зазначені на сторінці відповідного курсу на Gumroad. Ознайомтеся з ними перед покупкою.'
+  ];
+  translations['<h2>New courses, <em>quietly</em> announced.</h2>'] = [
+    '<h2>Nieuwe cursussen, <em>rustig</em> aangekondigd.</h2>',
+    '<h2>Про нові курси повідомляємо <em>ненав’язливо</em>.</h2>'
+  ];
+  translations['Leave your email to hear when a new course is published.'] = [
+    'Laat je e-mailadres achter om te horen wanneer er een nieuwe cursus verschijnt.',
+    'Залиште електронну адресу, щоб дізнаватися про нові курси.'
+  ];
+  translations['Email address'] = ['E-mailadres','Електронна адреса'];
+  translations['Notify me'] = ['Houd me op de hoogte','Сповістити мене'];
+  translations['Stay connected'] = ['Blijf op de hoogte','Будьте на зв’язку'];
+  translations['Do I receive a certificate?'] = ['Ontvang ik een certificaat?','Чи отримаю я сертифікат?'];
+  translations['After successfully completing this introductory course, you receive an electronic certificate confirming course completion and that you have studied the basics of the relevant massage technique. The certificate is informational only; it is not a professional qualification and does not confirm professional accreditation.'] = [
+    'Na succesvolle afronding van deze introductiecursus ontvang je een digitaal certificaat als bewijs van deelname en van het bestuderen van de basisprincipes van de betreffende massagetechniek. Het certificaat is uitsluitend informatief; het is geen beroepskwalificatie en bevestigt geen professionele accreditatie.',
+    'Після успішного завершення ознайомчого курсу учасник отримує електронний сертифікат, який підтверджує проходження курсу та ознайомлення з основами відповідної техніки масажу. Сертифікат має інформаційний характер, не підтверджує здобуття професійної кваліфікації та не засвідчує професійну акредитацію.'
+  ];
+  translations['After successfully completing the introductory course, participants receive an electronic certificate confirming course completion and that they have studied the basics of the relevant massage technique. The certificate is informational only; it is not a professional qualification and does not confirm professional accreditation.'] = [
+    'Na succesvolle afronding van de introductiecursus ontvangen deelnemers een digitaal certificaat als bewijs van deelname en van het bestuderen van de basisprincipes van de betreffende massagetechniek. Het certificaat is uitsluitend informatief; het is geen beroepskwalificatie en bevestigt geen professionele accreditatie.',
+    'Після успішного завершення ознайомчого курсу учасник отримує електронний сертифікат, який підтверджує проходження курсу та ознайомлення з основами відповідної техніки масажу. Сертифікат має інформаційний характер, не підтверджує здобуття професійної кваліфікації та не засвідчує професійну акредитацію.'
+  ];
+  translations['<div class="prose"><p>TATA courses are educational. They teach technique and theory and do not replace medical advice, local training or licensing requirements. After successfully completing the introductory course, participants receive an electronic certificate confirming course completion and that they have studied the basics of the relevant massage technique. The certificate is informational only; it is not a professional qualification and does not confirm professional accreditation.</p>'] = [
+    '<div class="prose"><p>TATA-cursussen zijn educatief. Ze behandelen technieken en theorie en vervangen geen medisch advies, lokale opleiding of vergunningsvereisten. Na succesvolle afronding van de introductiecursus ontvangen deelnemers een digitaal certificaat als bewijs van deelname en van het bestuderen van de basisprincipes van de betreffende massagetechniek. Het certificaat is uitsluitend informatief; het is geen beroepskwalificatie en bevestigt geen professionele accreditatie.</p>',
+    '<div class="prose"><p>Курси TATA мають виключно освітній характер і спрямовані на вивчення теорії та ознайомлення з техніками масажу.</p><p>Навчальні матеріали не замінюють медичної консультації, професійної освіти або підготовки, необхідної для здійснення відповідної діяльності згідно з вимогами законодавства країни, у якій учасник планує працювати.</p><p>Після успішного завершення ознайомчого курсу учасник отримує електронний сертифікат, що підтверджує проходження курсу та ознайомлення з основами відповідної техніки масажу.</p><p>Сертифікат має інформаційний характер, не є документом про здобуття професійної кваліфікації та не підтверджує державну чи професійну акредитацію.</p>'
+  ];
+  function localizeMarkup(markup){
+    if(language === 'en') return markup;
+    var protectedFilters = [];
+    markup = markup.replace(/data-filter="([^"]*)"/g,function(m,v){protectedFilters.push(v);return 'data-filter="__TOTA_FILTER_'+(protectedFilters.length-1)+'__"';});
+    Object.keys(translations).sort(function(a,b){return b.length-a.length;}).forEach(function(source){
+      var value = translations[source], translated = Array.isArray(value) ? value[['nl','uk'].indexOf(language)] : source;
+      if(translated) markup = markup.split(source).join(translated);
+    });
+    return markup.replace(/data-filter="__TOTA_FILTER_(\d+)__"/g,function(m,i){return 'data-filter="'+protectedFilters[Number(i)]+'"';});
+  }
+  function translatedNav(){
+    var labels = {en:['Home','About','Courses','Contact'],nl:['Home','Over ons','Cursussen','Contact'],uk:['Головна','Про нас','Курси','Контакти']}[language];
+    document.querySelectorAll('.nav a').forEach(function(a,i){a.textContent = labels[i];});
+    document.getElementById('menuBtn').textContent = {en:'Menu',nl:'Menu',uk:'Меню'}[language];
+    document.getElementById('skip').textContent = {en:'Skip to content',nl:'Ga naar inhoud',uk:'Перейти до вмісту'}[language];
+    var languageLabel = {en:'Language',nl:'Taal',uk:'Мова'}[language];
+    document.getElementById('language').setAttribute('aria-label',languageLabel);
+    document.querySelector('label[for="language"]').textContent = languageLabel;
+    document.documentElement.lang = language;
+  }
+  function setLanguage(next){
+    language = ['uk','en','nl'].indexOf(next) >= 0 ? next : 'uk';
+    try { localStorage.setItem('tota-language',language); } catch(e) {}
+    document.getElementById('language').value = language;
+    translatedNav();
+    document.getElementById('footer').innerHTML = localizeMarkup(footer());
+    route();
+  }
 
   function esc(s){return String(s == null ? '' : s).replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});}
-  function money(c){return c.price > 0 ? new Intl.NumberFormat('en',{style:'currency',currency:c.currency||'EUR',maximumFractionDigits:0}).format(c.price) : 'Free';}
+  function money(c){return c.price > 0 ? new Intl.NumberFormat({en:'en',nl:'nl-NL',uk:'uk-UA'}[language],{style:'currency',currency:c.currency||'EUR',maximumFractionDigits:0}).format(c.price) : localizeMarkup('Free');}
   function safeUrl(u){return /^https:\/\//i.test(u || '') ? u : '';}
   function tone(c){if(c.tone) return c.tone; var i = Math.max(0, categories.indexOf(c.category)); return ['sand','sage','brown','olive'][i % 4];}
 
@@ -499,10 +747,9 @@ main{animation:in .5s ease backwards}
   var HOME_FAQ = [
     {q:'Where are the lessons hosted?', a:'Lessons, downloads and course materials are hosted on Gumroad. This website presents the academy and its courses, and each course page sends you to Gumroad to complete your purchase.'},
     {q:'Do I need experience to start?', a:'Not always. Every course shows its level, from Beginner to Intermediate, so you can choose what fits.'},
-    {q:'Is a certificate included?', a:'Unless a course page says otherwise, no certificate or accreditation is included. Courses are educational programmes.'},
+    {q:'Do I receive a certificate?', a:'After successfully completing the introductory course, participants receive an electronic certificate confirming course completion and that they have studied the basics of the relevant massage technique. The certificate is informational only; it is not a professional qualification and does not confirm professional accreditation.'},
     {q:'Can I learn massage fully online?', a:'Online courses teach technique, structure and theory. Practising with real people matters, and requirements to work professionally differ by country, so please check your local rules.'},
     {q:'How do I get access after buying?', a:'You buy on Gumroad and receive access through their platform. The course page and the Gumroad page list what is included.'},
-    {q:'What are the refund terms?', a:'Terms are set per course on its Gumroad page. Please read them before you buy.'}
   ];
 
   function newsletter(){
@@ -523,12 +770,12 @@ main{animation:in .5s ease backwards}
     '<section class="sec"><div class="wrap hero">' +
       '<div class="hero-copy"><p class="eyebrow">Online massage education</p><h1>Master the <em>Art</em> of Touch.</h1>' +
       '<p class="lead">Discover the knowledge, techniques and philosophy behind professional massage.</p>' +
-      '<div class="actions"><a class="btn" href="#courses">Explore Courses <span aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="#about">About TOTA</a></div></div>' +
+      '<div class="actions"><a class="btn" href="#courses">Explore Courses <span aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="#about">About TATA</a></div></div>' +
       '<figure class="hero-art">'+heroArt+(site.heroImage?'':'<figcaption class="ph">Editorial photograph placeholder</figcaption>')+'</figure>' +
     '</div></section>' +
 
     '<section class="sec alt"><div class="wrap two"><div class="sh" style="margin:0"><p class="eyebrow">Introduction</p><h2>An academy for people who work with their <em>hands</em>.</h2></div>' +
-      '<div class="prose"><p>TOTA is an online academy for massage techniques, professional development and the art of therapeutic and wellness touch. Every course is built around the same idea: good massage is knowledge, technique, body awareness and the quality of touch, working together.</p>' +
+      '<div class="prose"><p>TATA is an online academy for massage techniques, professional development and the art of therapeutic and wellness touch. Every course is built around the same idea: good massage is knowledge, technique, body awareness and the quality of touch, working together.</p>' +
       '<div class="pillars"><div><h3>Knowledge</h3><p>Why a movement works, not only how it looks.</p></div><div><h3>Technique</h3><p>Clear, repeatable strokes practised step by step.</p></div><div><h3>Body awareness</h3><p>Attention to posture, breath and tension, yours and theirs.</p></div><div><h3>Human touch</h3><p>The care and presence that make a session feel right.</p></div></div></div></div></section>' +
 
     '<section class="sec"><div class="wrap"><div class="sh-row"><div class="sh"><p class="eyebrow">Featured courses</p><h2>Begin with <em>one</em> course.</h2></div><a class="link" href="#courses">All courses</a></div>' +
@@ -537,13 +784,13 @@ main{animation:in .5s ease backwards}
     '<section class="sec band"><div class="wrap two"><div style="display:grid;gap:20px"><p class="eyebrow">Our philosophy</p><p class="lead">Touch is a language. Learning it takes attention, patience and a clear understanding of how the body moves.</p><div><a class="btn ghost" style="color:var(--band-fg);border-color:var(--band-soft)" href="#about">Read our approach</a></div></div>' +
       '<p class="motto" aria-label="The art of touch. The science of movement. The knowledge of touch."><span>The art of touch.</span><span>The science of movement.</span><span>The knowledge of touch.</span></p></div></section>' +
 
-    '<section class="sec"><div class="wrap"><div class="sh"><p class="eyebrow">Why learn with TOTA</p><h2>Clear structure, <em>calm</em> pace.</h2></div>' +
+    '<section class="sec"><div class="wrap"><div class="sh"><p class="eyebrow">Why learn with TATA</p><h2>Clear structure, <em>calm</em> pace.</h2></div>' +
       '<div class="why"><div><h3>Structured programmes</h3><p>Each course is a sequence of modules, from preparation to the finishing stroke.</p></div><div><h3>Technique with reasons</h3><p>Movements are explained with the thinking behind them: pressure, direction and pace.</p></div><div><h3>Your own pace</h3><p>Lessons are self-paced, so you can repeat a module until it feels natural.</p></div><div><h3>No surprises</h3><p>Every course page lists the programme and materials before you buy. Checkout is handled by Gumroad.</p></div></div></div></section>' +
 
     '<section class="sec alt"><div class="wrap"><div class="sh"><p class="eyebrow">Massage techniques</p><h2>The movements behind the <em>practice</em>.</h2><p class="lead">A few of the classical techniques you meet across our courses.</p></div>' +
       '<ul class="tech"><li><b>Effleurage</b><span>Long, gliding strokes that spread oil and warm the tissue.</span></li><li><b>Petrissage</b><span>Kneading, lifting and rolling of soft tissue.</span></li><li><b>Friction</b><span>Small, focused circular or cross-fibre movements.</span></li><li><b>Tapotement</b><span>Rhythmic tapping or percussion with relaxed hands.</span></li><li><b>Compression</b><span>Sustained, rhythmic pressure with palm or forearm.</span></li><li><b>Stretching</b><span>Guided movement through a comfortable range.</span></li></ul></div></section>' +
 
-    '<section class="sec"><div class="wrap"><div class="sh"><p class="eyebrow">Student testimonials</p><h2>In students\' own <em>words</em>.</h2></div>' +
+    '<section class="sec"><div class="wrap"><div class="sh"><p class="eyebrow">Student testimonials</p></div>' +
       '<div class="quotes">'+[1,2,3].map(function(){return '<figure class="quote" style="margin:0"><span class="tag">Placeholder</span><p>Student feedback will appear here once real reviews have been collected.</p><small>Student name, course</small></figure>';}).join('')+'</div></div></section>' +
 
     '<section class="sec alt"><div class="wrap"><div class="sh"><p class="eyebrow">Questions</p><h2>Frequently asked <em>questions</em>.</h2></div>'+faq(HOME_FAQ)+'</div></section>' +
@@ -552,15 +799,15 @@ main{animation:in .5s ease backwards}
 
   function about(){
     return '' +
-    '<section class="wrap page-head"><p class="eyebrow">About TOTA</p><h1>More Than a Technique. <em>An Art.</em></h1><p class="lead">Massage combines knowledge, technique, body awareness and the quality of human touch. TOTA teaches all four.</p></section>' +
+    '<section class="wrap page-head"><p class="eyebrow">About TATA</p><h1>More Than a Technique. <em>An Art.</em></h1><p class="lead">Massage combines knowledge, technique, body awareness and the quality of human touch. TATA teaches all four.</p></section>' +
     '<section class="sec alt"><div class="wrap"><div class="sh"><p class="eyebrow">Philosophy</p><h2>Four things that make a <em>session</em>.</h2></div>' +
       '<div class="why"><div><h3>Knowledge</h3><p>Understanding the body, the reason for each movement and the limits of what you do.</p></div><div><h3>Technique</h3><p>Strokes that are precise, repeatable and kind to your own hands and back.</p></div><div><h3>Body awareness</h3><p>Noticing posture, breath and tension, in the person you work with and in yourself.</p></div><div><h3>Quality of touch</h3><p>Presence, pace and intention. The part that cannot be reduced to a diagram.</p></div></div></div></section>' +
     '<section class="sec"><div class="wrap two"><div class="sh" style="margin:0"><p class="eyebrow">Educational approach</p><h2>Learn in <em>layers</em>.</h2></div>' +
       '<div class="prose"><p>Each course begins with preparation and fundamentals, then adds technique one layer at a time. Lessons are structured as modules, so you always know where you are and what comes next.</p><p>We explain the reasoning behind movements, not just the movements themselves. When you understand why a stroke works, you can adapt it to the person in front of you.</p><p>Courses are self-paced and hosted on Gumroad, so you can return to any module as often as you need.</p></div></div></section>' +
     '<section class="sec band"><div class="wrap two"><div style="display:grid;gap:20px"><p class="eyebrow">Mission</p><h2>Careful massage education, open to anyone who wants to learn it properly.</h2></div>' +
       '<p class="motto" aria-label="The art of touch. The science of movement. The knowledge of touch."><span>The art of touch.</span><span>The science of movement.</span><span>The knowledge of touch.</span></p></div></section>' +
-    '<section class="sec"><div class="wrap"><div class="sh"><p class="eyebrow">Good to know</p><h2>What TOTA <em>is</em> and is not.</h2></div>' +
-      '<div class="prose"><p>TOTA courses are educational. They teach technique and theory and do not replace medical advice, local training or licensing requirements. Unless a course page states otherwise, no certificate or accreditation is included.</p><div class="actions"><a class="btn" href="#courses">Explore Courses <span aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="#contact">Get in touch</a></div></div></div></section>';
+    '<section class="sec"><div class="wrap"><div class="sh"><p class="eyebrow">Good to know</p><h2>What TATA <em>is</em> and is not.</h2></div>' +
+      '<div class="prose"><p>TATA courses are educational. They teach technique and theory and do not replace medical advice, local training or licensing requirements. After successfully completing the introductory course, participants receive an electronic certificate confirming course completion and that they have studied the basics of the relevant massage technique. The certificate is informational only; it is not a professional qualification and does not confirm professional accreditation.</p><div class="actions"><a class="btn" href="#courses">Explore Courses <span aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="#contact">Get in touch</a></div></div></div></section>';
   }
 
   function chips(){
@@ -604,7 +851,7 @@ main{animation:in .5s ease backwards}
   }
 
   function contact(){
-    return '<section class="wrap page-head"><p class="eyebrow">Contact</p><h1>Say <em>hello</em>.</h1><p class="lead">Questions about a course or about TOTA? Write to us and we will reply.</p></section>' +
+    return '<section class="wrap page-head"><p class="eyebrow">Contact</p><h1>Say <em>hello</em>.</h1><p class="lead">Questions about a course or about TATA? Write to us and we will reply.</p></section>' +
       '<section class="sec" style="padding-top:0"><div class="wrap contact">' +
         '<div style="display:grid;gap:28px"><div style="display:grid;gap:10px"><p class="eyebrow">Email</p><div class="copyrow"><code id="mail">'+esc(site.email)+'</code><button class="chip" type="button" data-copy="mail">Copy</button></div><p class="status" id="copystatus" role="status" aria-live="polite"></p></div>' +
         '<div style="display:grid;gap:12px"><p class="eyebrow">Follow</p><ul class="social">'+site.social.map(function(s){return '<li><a class="link" href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.label)+'</a></li>';}).join('')+'</ul></div></div>' +
@@ -624,7 +871,7 @@ main{animation:in .5s ease backwards}
   }
 
   function footer(){
-    return '<div class="wrap foot"><div class="foot-brand"><span class="foot-tota">TOTA</span><span class="foot-name">The Art of Touch Academy</span><p>Knowledge, technique and the art of touch, taught with care.</p></div>' +
+    return '<div class="wrap foot"><div class="foot-brand"><span class="foot-tota">TATA</span><span class="foot-name">The Art of Touch Academy</span><p>Knowledge, technique and the art of touch, taught with care.</p></div>' +
       '<div><h4>Explore</h4><ul><li><a href="#home">Home</a></li><li><a href="#about">About</a></li><li><a href="#courses">Courses</a></li><li><a href="#contact">Contact</a></li></ul></div>' +
       '<div><h4>Follow</h4><ul>'+site.social.map(function(s){return '<li><a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+esc(s.label)+'</a></li>';}).join('')+'</ul></div>' +
       '<div><h4>Contact</h4><ul><li>'+esc(site.email)+'</li><li><a href="#privacy">Privacy Policy</a></li><li><a href="#terms">Terms and Conditions</a></li></ul></div></div>' +
@@ -645,8 +892,8 @@ main{animation:in .5s ease backwards}
 
   /* router: plain #name hashes only */
   var ROUTES = {
-    home:{v:home,t:'The Art of Touch Academy',d:'TOTA, The Art of Touch Academy: online massage education with courses in relaxation, deep tissue, sports and facial massage and professional development.',n:'home'},
-    about:{v:about,t:'About TOTA | The Art of Touch Academy',d:'More than a technique, an art. Learn about the philosophy, educational approach and mission of The Art of Touch Academy.',n:'about'},
+    home:{v:home,t:'The Art of Touch Academy',d:'TATA, The Art of Touch Academy: online massage education with courses in relaxation, deep tissue, sports and facial massage and professional development.',n:'home'},
+    about:{v:about,t:'About TATA | The Art of Touch Academy',d:'More than a technique, an art. Learn about the philosophy, educational approach and mission of The Art of Touch Academy.',n:'about'},
     courses:{v:catalogue,t:'Massage Courses | The Art of Touch Academy',d:'Browse massage courses by category, level and price. Each course page lists the programme and materials before you buy on Gumroad.',n:'courses'},
     contact:{v:contact,t:'Contact | The Art of Touch Academy',d:'Contact The Art of Touch Academy with questions about courses.',n:'contact'},
     privacy:{v:function(){return legal('privacy');},t:'Privacy Policy | The Art of Touch Academy',d:'Privacy policy of The Art of Touch Academy.',n:''},
@@ -667,8 +914,8 @@ main{animation:in .5s ease backwards}
       html = '<section class="wrap legal"><p class="eyebrow">404</p><h1>Page not found</h1><p>The page you are looking for does not exist.</p><div><a class="btn" href="#home">Back to home</a></div></section>';
       title = 'Page not found | The Art of Touch Academy'; desc = 'Page not found.'; nav = '';
     }
-    main.innerHTML = html;
-    document.title = title; setMeta(desc); setLd(ld);
+    main.innerHTML = localizeMarkup(html);
+    document.title = localizeMarkup(title); setMeta(localizeMarkup(desc)); setLd(ld);
     document.querySelectorAll('.nav a').forEach(function(a){if(a.dataset.r === nav) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');});
     closeMenu();
     window.scrollTo({top:0,behavior:'instant'});
@@ -687,25 +934,28 @@ main{animation:in .5s ease backwards}
     if(f){
       filter = f.getAttribute('data-filter');
       document.querySelectorAll('.chip[data-filter]').forEach(function(b){b.setAttribute('aria-pressed', String(b.getAttribute('data-filter') === filter));});
-      document.getElementById('grid').innerHTML = grid();
+      document.getElementById('grid').innerHTML = localizeMarkup(grid());
       return;
     }
     var cp = e.target.closest('[data-copy]');
     if(cp){
       var el = document.getElementById(cp.getAttribute('data-copy')), st = document.getElementById('copystatus');
-      var sel = function(){var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); st.textContent = 'Address selected. Press copy on your keyboard.';};
-      if(navigator.clipboard && navigator.clipboard.writeText){navigator.clipboard.writeText(el.textContent).then(function(){st.textContent = 'Email address copied.';}).catch(sel);} else {sel();}
+      var sel = function(){var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); st.textContent = localizeMarkup('Address selected. Press copy on your keyboard.');};
+      if(navigator.clipboard && navigator.clipboard.writeText){navigator.clipboard.writeText(el.textContent).then(function(){st.textContent = localizeMarkup('Email address copied.');}).catch(sel);} else {sel();}
     }
   });
   main.addEventListener('submit', function(e){
     var form = e.target.closest('form[data-form]'); if(!form) return;
     e.preventDefault();
     var st = form.querySelector('.status');
-    if(!form.checkValidity()){st.textContent = 'Please complete the required fields with a valid email address.'; var bad = form.querySelector(':invalid'); if(bad) bad.focus(); return;}
-    st.textContent = form.getAttribute('data-form') === 'newsletter' ? 'Sign-up is not active yet. Please check back soon.' : 'This form is not connected yet. Please write to us at '+site.email+'.';
+    if(!form.checkValidity()){st.textContent = localizeMarkup('Please complete the required fields with a valid email address.'); var bad = form.querySelector(':invalid'); if(bad) bad.focus(); return;}
+    st.textContent = form.getAttribute('data-form') === 'newsletter' ? localizeMarkup('Sign-up is not active yet. Please check back soon.') : localizeMarkup('This form is not connected yet. Please write to us at '+site.email+'.');
   });
 
-  document.getElementById('footer').innerHTML = footer();
+  document.getElementById('language').value = language;
+  document.getElementById('language').addEventListener('change',function(e){setLanguage(e.target.value);});
+  translatedNav();
+  document.getElementById('footer').innerHTML = localizeMarkup(footer());
   window.addEventListener('hashchange', route);
   route();
 })();
